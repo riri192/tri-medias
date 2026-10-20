@@ -1,0 +1,35 @@
+
+name: Compiler Tri Medias Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Recuperer les fichiers
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installer les dependances
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller PySide6 opencv-python-headless pillow send2trash
+
+      - name: Compiler le programme
+        run: python -m PyInstaller --noconfirm --clean --windowed --onedir --name TriMedias --collect-all PySide6 --collect-all cv2 tri_medias.py
+
+      - name: Recuperer l'application Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: TriMedias-Windows
+          path: dist/TriMedias/
+  
